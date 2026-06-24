@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMIPI Product Extractor — Jewelry Data Intelligence</title>
+  <meta name="description" content="AI-powered jewelry product data extractor. Converts messy diamond and gemstone descriptions into clean, structured data using Gemini AI + deterministic validation." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────── */
+    :root {
+      --bg:          #0a0b0f;
+      --bg-card:     #12141a;
+      --bg-input:    #1a1d26;
+      --bg-hover:    #1e2230;
+      --border:      rgba(255,255,255,0.07);
+      --border-glow: rgba(139,92,246,0.35);
+      --purple:      #8b5cf6;
+      --purple-lt:   #a78bfa;
+      --purple-dk:   #6d28d9;
+      --gold:        #f59e0b;
+      --gold-lt:     #fbbf24;
+      --emerald:     #10b981;
+      --ruby:        #ef4444;
+      --sapphire:    #3b82f6;
+      --text-1:      #f1f5f9;
+      --text-2:      #94a3b8;
+      --text-3:      #64748b;
+      --success:     #22c55e;
+      --warning:     #f59e0b;
+      --error:       #ef4444;
+      --radius:      14px;
+      --radius-sm:   8px;
+      --shadow:      0 20px 60px rgba(0,0,0,0.6);
+      --transition:  0.22s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─── RESET ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── BACKGROUND GRADIENT MESH ──────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 800px 600px at 10% 20%, rgba(139,92,246,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 600px 500px at 85% 70%, rgba(245,158,11,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 400px 400px at 50% 50%, rgba(16,185,129,0.03) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── ANIMATED PARTICLES ────────────────────────── */
+    .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float linear infinite;
+      opacity: 0;
+    }
+    @keyframes float {
+      0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* ─── LAYOUT ─────────────────────────────────────── */
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* ─── HEADER ─────────────────────────────────────── */
+    header {
+      padding: 32px 0 0;
+      text-align: center;
+      position: relative;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(245,158,11,0.1));
+      border: 1px solid var(--border-glow);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--purple-lt);
+      margin-bottom: 20px;
+    }
+    .logo-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple-lt);
+      animation: pulse-dot 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #f1f5f9 0%, #a78bfa 50%, #fbbf24 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      font-size: 1.05rem;
+      color: var(--text-2);
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+
+    /* ─── API KEY BANNER ─────────────────────────────── */
+    .api-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      transition: var(--transition);
+    }
+    .api-status-bar.ok   { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.25); color: #86efac; }
+    .api-status-bar.warn { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); color: #fde68a; }
+    .status-icon { font-size: 16px; }
+
+    /* ─── TABS ───────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px;
+      width: fit-content;
+      margin: 0 auto 32px;
+    }
+    .tab-btn {
+      padding: 10px 24px;
+      border: none;
+      background: transparent;
+      color: var(--text-3);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover { color: var(--text-2); background: var(--bg-hover); }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--purple-dk), var(--purple));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(139,92,246,0.35);
+    }
+
+    /* ─── PANEL ──────────────────────────────────────── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ─── CARD ───────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-glow), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .card:hover::before { opacity: 1; }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title .icon { font-size: 18px; }
+
+    /* ─── FORM ELEMENTS ──────────────────────────────── */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+    textarea, input[type="text"], input[type="password"] {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-1);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      padding: 12px 14px;
+      outline: none;
+      transition: var(--transition);
+      resize: vertical;
+    }
+    textarea:focus, input[type="text"]:focus, input[type="password"]:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+    textarea { min-height: 120px; }
+
+    /* ─── API KEY INPUT ──────────────────────────────── */
+    .api-key-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .api-key-row > div { flex: 1; min-width: 260px; }
+    .api-key-row input { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em; }
+
+    /* ─── BUTTONS ────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple-dk), var(--purple));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(139,92,246,0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(139,92,246,0.45);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+    }
+    .btn-secondary:hover { background: var(--bg-hover); color: var(--text-1); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #92400e, var(--gold));
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(245,158,11,0.25);
+    }
+    .btn-gold:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 30px rgba(245,158,11,0.4);
+    }
+
+    /* ─── SPINNER ────────────────────────────────────── */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── FILE DROP ZONE ─────────────────────────────── */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--purple);
+      background: rgba(139,92,246,0.05);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-icon { font-size: 36px; margin-bottom: 8px; }
+    .drop-text { font-size: 14px; color: var(--text-2); }
+    .drop-text span { color: var(--purple-lt); font-weight: 600; cursor: pointer; }
+    .drop-sub { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+    .file-selected {
+      background: rgba(139,92,246,0.08);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--purple-lt);
+      margin-top: 12px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .file-selected.show { display: flex; }
+
+    /* ─── PROGRESS BAR ───────────────────────────────── */
+    .progress-wrap { margin: 16px 0; display: none; }
+    .progress-wrap.show { display: block; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+    .progress-bar {
+      height: 6px;
+      background: var(--bg-input);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple-dk), var(--purple-lt));
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* ─── RESULTS SECTION ───────────────────────────── */
+    .results-section { margin-top: 32px; }
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .results-title {
+      font-size: 17px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge-purple { background: rgba(139,92,246,0.2); color: var(--purple-lt); }
+    .badge-green  { background: rgba(34,197,94,0.15);  color: #86efac; }
+    .badge-gold   { background: rgba(245,158,11,0.15); color: var(--gold-lt); }
+    .badge-red    { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+
+    /* ─── SINGLE RESULT CARD ─────────────────────────── */
+    .result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeInUp 0.4s ease both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .result-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 18px 22px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .style-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-1);
+    }
+    .confidence-ring {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .conf-pill {
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .conf-high   { background: rgba(34,197,94,0.15);  color: #86efac; }
+    .conf-medium { background: rgba(245,158,11,0.15); color: var(--gold-lt); }
+    .conf-low    { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 0;
+    }
+    .result-field {
+      padding: 14px 20px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .result-field:nth-child(n) { border-bottom: 1px solid var(--border); }
+    .field-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+    .field-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-1);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .field-value.null-val { color: var(--text-3); font-style: italic; }
+    .field-value.bool-true  { color: var(--success); }
+    .field-value.bool-false { color: var(--text-3); }
+    .stone-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .stone-natural    { background: rgba(245,158,11,0.15); color: var(--gold-lt); }
+    .stone-lab        { background: rgba(139,92,246,0.15); color: var(--purple-lt); }
+    .stone-ruby       { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+    .stone-emerald    { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .stone-sapphire   { background: rgba(59,130,246,0.15); color: #93c5fd; }
+    .stone-combo      { background: rgba(168,85,247,0.15); color: #d8b4fe; }
+
+    .warnings-row {
+      padding: 12px 20px;
+      background: rgba(245,158,11,0.05);
+      border-top: 1px solid rgba(245,158,11,0.15);
+      font-size: 12px;
+      color: var(--gold-lt);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .raw-text-row {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-3);
+      font-family: 'JetBrains Mono', monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ─── BATCH TABLE ────────────────────────────────── */
+    .table-scroll { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th {
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    td.mono { font-family: 'JetBrains Mono', monospace; }
+    td.dim { color: var(--text-3); }
+    td.truncate { max-width: 200px; overflow: hidden; text-overflow: ellipsis; }
+
+    /* ─── ALERTS ──────────────────────────────────────── */
+    .alert {
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 16px;
+      animation: fadeInUp 0.3s ease;
+    }
+    .alert-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }
+    .alert-info  { background: rgba(59,130,246,0.1);  border: 1px solid rgba(59,130,246,0.25);  color: #93c5fd; }
+    .alert-icon  { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── STATS BAR ──────────────────────────────────── */
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .stat-val { font-size: 22px; font-weight: 800; color: var(--purple-lt); }
+    .stat-lbl { font-size: 11px; color: var(--text-3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+    /* ─── FOOTER ─────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 40px 0 32px;
+      color: var(--text-3);
+      font-size: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    footer a { color: var(--purple-lt); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ─── TOOLTIP ────────────────────────────────────── */
+    [title] { cursor: help; }
+
+    /* ─── LOADING OVERLAY ────────────────────────────── */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10,11,15,0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      border-radius: var(--radius);
+      z-index: 10;
+    }
+    .loading-overlay.show { display: flex; }
+    .loading-text { color: var(--text-2); font-size: 14px; font-weight: 500; }
+    .big-spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(139,92,246,0.2);
+      border-top-color: var(--purple);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 640px) {
+      .container { padding: 0 16px; }
+      .card { padding: 18px; }
+      .result-grid { grid-template-columns: repeat(2, 1fr); }
+      .tabs { width: 100%; }
+      .tab-btn { flex: 1; justify-content: center; padding: 10px 12px; font-size: 13px; }
+    }
+
+    /* ─── EXAMPLE PILLS ──────────────────────────────── */
+    .examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .example-pill {
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 11.5px;
+      font-weight: 500;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .example-pill:hover { border-color: var(--purple); color: var(--purple-lt); background: rgba(139,92,246,0.08); }
+  </style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container">
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="logo-badge"><span class="dot"></span> AMIPI · AI Intern Project 1</div>
+    <h1>Jewelry Product<br>Data Extractor</h1>
+    <p class="subtitle">
+      Convert messy diamond &amp; gemstone descriptions into clean, structured data
+      powered by Gemini AI + deterministic validation rules.
+    </p>
+    <div class="api-status-bar warn" id="apiStatusBar">
+      <span class="status-icon">⚠️</span>
+      <span id="apiStatusText">Checking API key status…</span>
+    </div>
+  </header>
+
+  <!-- ── TABS ── -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-single" onclick="switchTab('single')">
+      💎 Single Extraction
+    </button>
+    <button class="tab-btn" id="tab-batch" onclick="switchTab('batch')">
+      📋 Batch CSV Upload
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- SINGLE PANEL                                  -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel active" id="panel-single">
+    <div class="card" style="position:relative;">
+      <div class="loading-overlay" id="single-loading">
+        <div class="big-spinner"></div>
+        <div class="loading-text">Extracting product data…</div>
+      </div>
+
+      <!-- API Key -->
+      <div class="api-key-row">
+        <div>
+          <label for="single-api-key">🔑 Gemini API Key <span style="color:var(--text-3);font-weight:400;">(overrides .env)</span></label>
+          <input type="password" id="single-api-key" placeholder="AIza… — leave blank if set in .env" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="card-title"><span class="icon">📝</span> Product Description</div>
+      <p style="font-size:12px;color:var(--text-3);margin-bottom:10px;">Try an example or paste your own messy jewelry description:</p>
+
+      <div class="examples">
+        <button class="example-pill" onclick="fillExample('B401400-14WVS Natural Diamond Band, 1.20cttw, round diamonds, size 6.5')">Natural Band</button>
+        <button class="example-pill" onclick="fillExample('LB701100-18WFG Lab diamond pendant, F-G quality, 0.95cttw')">Lab Pendant</button>
+        <button class="example-pill" onclick="fillExample('B501200-18YRA Ruby and Diamond Alternate Band, 0.75ct diamond, 1.10ct ruby')">Ruby+Diamond</button>
+        <button class="example-pill" onclick="fillExample('LB445500-PTVVS2 Lab diamond bracelet platinum VVS2 3.25cttw')">Platinum Lab</button>
+        <button class="example-pill" onclick="fillExample('B601800-14REM Half Emerald Half Diamond Ring 14k rose gold')">Emerald Ring</button>
+        <button class="example-pill" onclick="fillExample('B998877-14RS Ruby color stone only band 14 rose')">Ruby Only</button>
+      </div>
+
+      <textarea id="single-text" rows="5" placeholder="e.g.  LB401400-14WVS Lab Grown Diamond Band 1.20 ctw white gold"></textarea>
+
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="single-extract-btn" onclick="extractSingle()">
+          <span>✨ Extract Data</span>
+        </button>
+        <button class="btn btn-secondary" onclick="clearSingle()">Clear</button>
+      </div>
+
+      <div id="single-alert"></div>
+    </div>
+
+    <!-- Single Result -->
+    <div class="results-section" id="single-results" style="display:none;">
+      <div class="results-header">
+        <div class="results-title">📦 Extracted Result</div>
+        <button class="btn btn-secondary" onclick="copyResult()" style="font-size:13px;padding:8px 16px;">📋 Copy JSON</button>
+      </div>
+      <div id="single-result-card"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!-- BATCH PANEL                                   -->
+  <!-- ══════════════════════════════════════════════ -->
+  <div class="panel" id="panel-batch">
+    <div class="card" style="position:relative;">
+      <div class="loading-overlay" id="batch-loading">
+        <div class="big-spinner"></div>
+        <div class="loading-text" id="batch-loading-text">Processing CSV… this may take a few minutes due to API rate limits.</div>
+      </div>
+
+      <!-- API Key -->
+      <div class="api-key-row">
+        <div>
+          <label for="batch-api-key">🔑 Gemini API Key <span style="color:var(--text-3);font-weight:400;">(overrides .env)</span></label>
+          <input type="password" id="batch-api-key" placeholder="AIza… — leave blank if set in .env" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="card-title"><span class="icon">📂</span> Upload CSV File</div>
+      <p style="font-size:12px;color:var(--text-3);margin-bottom:14px;">
+        CSV must have columns: <code style="color:var(--purple-lt);">id</code>, <code style="color:var(--purple-lt);">raw_product_text</code>
+      </p>
+
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="csv-file" accept=".csv" onchange="onFileSelected(this)" />
+        <div class="drop-icon">📄</div>
+        <div class="drop-text">Drop your CSV here or <span>click to browse</span></div>
+        <div class="drop-sub">CSV files up to 5 MB · must include <code>raw_product_text</code> column</div>
+      </div>
+
+      <div class="file-selected" id="file-selected-info">
+        <span>📄</span>
+        <span id="file-selected-name"></span>
+        <span style="color:var(--text-3);margin-left:auto;" id="file-selected-size"></span>
+      </div>
+
+      <div class="progress-wrap" id="batch-progress">
+        <div class="progress-label">
+          <span id="progress-status">Processing…</span>
+          <span id="progress-pct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn btn-primary" id="batch-extract-btn" onclick="extractBatch()">
+          <span>🚀 Process CSV</span>
+        </button>
+        <a href="/api/results/download" id="download-btn" class="btn btn-gold" style="display:none;text-decoration:none;">
+          ⬇️ Download JSON
+        </a>
+      </div>
+
+      <div id="batch-alert"></div>
+    </div>
+
+    <!-- Batch Results -->
+    <div class="results-section" id="batch-results" style="display:none;">
+      <div class="results-header">
+        <div class="results-title">📊 Batch Results <span class="badge badge-purple" id="batch-count-badge">0</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="toggleView()" id="view-toggle-btn" style="font-size:13px;padding:8px 16px;">🃏 Card View</button>
+          <a href="/api/results/download" class="btn btn-gold" style="text-decoration:none;font-size:13px;padding:8px 16px;">⬇️ Download JSON</a>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-bar" id="batch-stats"></div>
+
+      <!-- Table view (default) -->
+      <div id="table-view">
+        <div class="table-scroll">
+          <table id="batch-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Style Number</th>
+                <th>Stone Type</th>
+                <th>Category</th>
+                <th>Metal</th>
+                <th>Quality</th>
+                <th>Brand</th>
+                <th>Carat</th>
+                <th>Conf.</th>
+                <th>Warnings</th>
+              </tr>
+            </thead>
+            <tbody id="batch-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Card view (hidden by default) -->
+      <div id="card-view" style="display:none;">
+        <div id="batch-card-container" style="display:flex;flex-direction:column;gap:16px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Built with 💜 for AMIPI · AI Intern Assignment ·
+    <a href="https://aistudio.google.com/" target="_blank">Get a Gemini API Key</a>
+  </footer>
+</div>
+
+<script>
+  /* ═══════════════════════════════════════════════════
+     PARTICLES
+  ═══════════════════════════════════════════════════ */
+  (function initParticles() {
+    const container = document.getElementById('particles');
+    const colors = ['#8b5cf6','#a78bfa','#f59e0b','#10b981','#6d28d9'];
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 3 + 1;
+      p.style.cssText = `
+        width:${size}px;height:${size}px;
+        left:${Math.random()*100}%;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        animation-duration:${12+Math.random()*18}s;
+        animation-delay:${Math.random()*15}s;
+      `;
+      container.appendChild(p);
+    }
+  })();
+
+  /* ═══════════════════════════════════════════════════
+     STATE
+  ═══════════════════════════════════════════════════ */
+  let lastSingleResult = null;
+  let lastBatchResults  = [];
+  let currentView       = 'table';
+
+  /* ═══════════════════════════════════════════════════
+     ON LOAD — health check
+  ═══════════════════════════════════════════════════ */
+  window.addEventListener('DOMContentLoaded', async () => {
+    // drag/drop setup
+    const dz = document.getElementById('drop-zone');
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+    dz.addEventListener('drop',      e => {
+      e.preventDefault();
+      dz.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) { document.getElementById('csv-file').files = e.dataTransfer.files; onFileSelected({ files: e.dataTransfer.files }); }
+    });
+
+    // API health check
+    try {
+      const res = await fetch('/api/health');
+      const data = await res.json();
+      const bar = document.getElementById('apiStatusBar');
+      const txt = document.getElementById('apiStatusText');
+      if (data.gemini_api_key_set) {
+        bar.className = 'api-status-bar ok';
+        txt.textContent = '✓ GEMINI_API_KEY is set in .env — ready to extract!';
+      } else {
+        bar.className = 'api-status-bar warn';
+        txt.textContent = '⚠  GEMINI_API_KEY not found in .env — paste your key in the field below, or set it in .env';
+      }
+    } catch(_) {}
+  });
+
+  /* ═══════════════════════════════════════════════════
+     TABS
+  ═══════════════════════════════════════════════════ */
+  function switchTab(name) {
+    ['single','batch'].forEach(t => {
+      document.getElementById(`panel-${t}`).classList.toggle('active', t === name);
+      document.getElementById(`tab-${t}`).classList.toggle('active', t === name);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════
+     EXAMPLE PILLS
+  ═══════════════════════════════════════════════════ */
+  function fillExample(text) {
+    document.getElementById('single-text').value = text;
+    clearAlert('single-alert');
+    document.getElementById('single-results').style.display = 'none';
+  }
+
+  /* ═══════════════════════════════════════════════════
+     FILE SELECTED
+  ═══════════════════════════════════════════════════ */
+  function onFileSelected(input) {
+    const file = input.files ? input.files[0] : null;
+    const info   = document.getElementById('file-selected-info');
+    const nameEl = document.getElementById('file-selected-name');
+    const sizeEl = document.getElementById('file-selected-size');
+    if (file) {
+      nameEl.textContent = file.name;
+      sizeEl.textContent = formatBytes(file.size);
+      info.classList.add('show');
+    } else {
+      info.classList.remove('show');
+    }
+  }
+
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+
+  /* ═══════════════════════════════════════════════════
+     SINGLE EXTRACT
+  ═══════════════════════════════════════════════════ */
+  async function extractSingle() {
+    const text = document.getElementById('single-text').value.trim();
+    if (!text) { showAlert('single-alert', 'Please enter a product description.'); return; }
+    clearAlert('single-alert');
+
+    const apiKey = document.getElementById('single-api-key').value.trim();
+    const btn    = document.getElementById('single-extract-btn');
+    const overlay = document.getElementById('single-loading');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Extracting…';
+    overlay.classList.add('show');
+
+    try {
+      const body = { text };
+      if (apiKey) body.api_key = apiKey;
+
+      const res = await fetch('/api/extract/single', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        showAlert('single-alert', data.error || 'Extraction failed.');
+      } else {
+        lastSingleResult = data.result;
+        renderSingleResult(data.result);
+        document.getElementById('single-results').style.display = 'block';
+        document.getElementById('single-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch(e) {
+      showAlert('single-alert', 'Network error: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>✨ Extract Data</span>';
+      overlay.classList.remove('show');
+    }
+  }
+
+  function clearSingle() {
+    document.getElementById('single-text').value = '';
+    clearAlert('single-alert');
+    document.getElementById('single-results').style.display = 'none';
+    lastSingleResult = null;
+  }
+
+  function copyResult() {
+    if (!lastSingleResult) return;
+    navigator.clipboard.writeText(JSON.stringify(lastSingleResult, null, 2))
+      .then(() => { showTempToast('Copied to clipboard!'); })
+      .catch(() => {});
+  }
+
+  /* ═══════════════════════════════════════════════════
+     BATCH EXTRACT
+  ═══════════════════════════════════════════════════ */
+  async function extractBatch() {
+    const fileInput = document.getElementById('csv-file');
+    if (!fileInput.files.length) { showAlert('batch-alert', 'Please select a CSV file.'); return; }
+    clearAlert('batch-alert');
+
+    const apiKey  = document.getElementById('batch-api-key').value.trim();
+    const btn     = document.getElementById('batch-extract-btn');
+    const overlay = document.getElementById('batch-loading');
+    const prog    = document.getElementById('batch-progress');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Processing…';
+    overlay.classList.add('show');
+    prog.classList.add('show');
+
+    // Animate progress (indeterminate, since we can't stream)
+    let fakeProgress = 0;
+    const progFill = document.getElementById('progress-fill');
+    const progPct  = document.getElementById('progress-pct');
+    const progStatus = document.getElementById('progress-status');
+    progStatus.textContent = 'Sending to server…';
+    const tick = setInterval(() => {
+      fakeProgress = Math.min(fakeProgress + (Math.random() * 3), 88);
+      progFill.style.width = fakeProgress + '%';
+      progPct.textContent  = Math.round(fakeProgress) + '%';
+      if (fakeProgress > 30) progStatus.textContent = 'Calling Gemini API (rate-limited)…';
+      if (fakeProgress > 60) progStatus.textContent = 'Running deterministic validation…';
+    }, 800);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      if (apiKey) formData.append('api_key', apiKey);
+
+      const res = await fetch('/api/extract/batch', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      clearInterval(tick);
+      progFill.style.width = '100%';
+      progPct.textContent  = '100%';
+      progStatus.textContent = 'Done!';
+
+      if (!res.ok || data.error) {
+        showAlert('batch-alert', data.error || 'Batch processing failed.');
+      } else {
+        lastBatchResults = data.results;
+        renderBatchResults(data.results);
+        document.getElementById('batch-results').style.display = 'block';
+        document.getElementById('download-btn').style.display  = 'flex';
+        document.getElementById('batch-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } catch(e) {
+      clearInterval(tick);
+      showAlert('batch-alert', 'Network error: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>🚀 Process CSV</span>';
+      overlay.classList.remove('show');
+      setTimeout(() => prog.classList.remove('show'), 1500);
+    }
+  }
+
+  function toggleView() {
+    const tableView = document.getElementById('table-view');
+    const cardView  = document.getElementById('card-view');
+    const btn       = document.getElementById('view-toggle-btn');
+    if (currentView === 'table') {
+      tableView.style.display = 'none';
+      cardView.style.display  = 'block';
+      btn.textContent = '📋 Table View';
+      currentView = 'card';
+    } else {
+      tableView.style.display = 'block';
+      cardView.style.display  = 'none';
+      btn.textContent = '🃏 Card View';
+      currentView = 'table';
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════
+     RENDER HELPERS
+  ═══════════════════════════════════════════════════ */
+  function stoneChip(stone) {
+    if (!stone) return '<span class="dim">—</span>';
+    let cls = 'stone-natural';
+    if (stone.includes('Lab'))     cls = 'stone-lab';
+    else if (stone.includes('Ruby'))    cls = 'stone-ruby';
+    else if (stone.includes('Emerald')) cls = 'stone-emerald';
+    else if (stone.includes('Sapphire'))cls = 'stone-sapphire';
+    else if (stone.includes('+'))       cls = 'stone-combo';
+    const emoji = stone.includes('Lab') ? '🔬'
+                : stone.includes('Ruby') ? '🔴'
+                : stone.includes('Emerald') ? '💚'
+                : stone.includes('Sapphire') ? '💙'
+                : stone.includes('+') ? '✨' : '💎';
+    return `<span class="stone-chip ${cls}">${emoji} ${stone}</span>`;
+  }
+
+  function confPill(score) {
+    const pct = Math.round((score || 0) * 100);
+    const cls = pct >= 90 ? 'conf-high' : pct >= 65 ? 'conf-medium' : 'conf-low';
+    return `<span class="conf-pill ${cls}">${pct}%</span>`;
+  }
+
+  function nullish(v) {
+    if (v === null || v === undefined || v === '') return '<span class="field-value null-val">null</span>';
+    return `<span class="field-value">${escHtml(String(v))}</span>`;
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function renderResultCard(r, idx) {
+    const warnings = r.notes_or_warnings || [];
+    const warnHtml = warnings.length
+      ? `<div class="warnings-row">⚠️ <span>${warnings.map(escHtml).join(' · ')}</span></div>`
+      : '';
+
+    return `
+      <div class="result-card" style="animation-delay:${idx * 0.05}s">
+        <div class="result-header-row">
+          <div>
+            <div class="field-label">Style Number</div>
+            <div class="style-number">${escHtml(r.style_number || '—')}</div>
+          </div>
+          <div class="confidence-ring">
+            <span style="color:var(--text-3);font-size:12px;">Confidence</span>
+            ${confPill(r.confidence_score)}
+          </div>
+        </div>
+        <div class="result-grid">
+          <div class="result-field"><div class="field-label">Stone Type</div>${stoneChip(r.stone_type)}</div>
+          <div class="result-field"><div class="field-label">Category</div><div class="field-value">${escHtml(r.category || '—')}</div></div>
+          <div class="result-field"><div class="field-label">Brand</div><div class="field-value" style="color:var(--gold-lt)">${escHtml(r.brand || '—')}</div></div>
+          <div class="result-field"><div class="field-label">Metal</div>${nullish(r.metal)}</div>
+          <div class="result-field"><div class="field-label">Metal Group</div>${nullish(r.metal_group)}</div>
+          <div class="result-field"><div class="field-label">Quality</div>${nullish(r.quality)}</div>
+          <div class="result-field"><div class="field-label">Carat Weight</div>${nullish(r.carat_weight !== null && r.carat_weight !== undefined ? r.carat_weight + ' ct' : null)}</div>
+          <div class="result-field"><div class="field-label">Parent</div>${nullish(r.parent)}</div>
+          <div class="result-field"><div class="field-label">Design ID</div>${nullish(r.design_id)}</div>
+          <div class="result-field"><div class="field-label">Lab Grown</div><span class="field-value ${r.is_lab_grown ? 'bool-true' : 'bool-false'}">${r.is_lab_grown ? '✓ Yes' : '✗ No'}</span></div>
+        </div>
+        ${warnHtml}
+        <div class="raw-text-row" title="${escHtml(r.raw_product_text || '')}">📄 ${escHtml((r.raw_product_text || '').substring(0, 120))}${(r.raw_product_text||'').length > 120 ? '…' : ''}</div>
+      </div>
+    `;
+  }
+
+  function renderSingleResult(r) {
+    document.getElementById('single-result-card').innerHTML = renderResultCard(r, 0);
+  }
+
+  function renderBatchResults(results) {
+    // Stats
+    const total   = results.length;
+    const natural = results.filter(r => r.stone_type === 'Natural Diamond').length;
+    const lab     = results.filter(r => r.stone_type === 'Lab-Grown Diamond').length;
+    const perfect = results.filter(r => (r.confidence_score || 0) >= 0.95).length;
+    const avgConf = total ? (results.reduce((s,r) => s + (r.confidence_score || 0), 0) / total * 100).toFixed(0) : 0;
+
+    document.getElementById('batch-count-badge').textContent = total;
+    document.getElementById('batch-stats').innerHTML = `
+      <div class="stat-item"><div class="stat-val">${total}</div><div class="stat-lbl">Total Records</div></div>
+      <div class="stat-item"><div class="stat-val">${natural}</div><div class="stat-lbl">Natural Diamond</div></div>
+      <div class="stat-item"><div class="stat-val">${lab}</div><div class="stat-lbl">Lab-Grown</div></div>
+      <div class="stat-item"><div class="stat-val">${perfect}</div><div class="stat-lbl">100% Confidence</div></div>
+      <div class="stat-item"><div class="stat-val">${avgConf}%</div><div class="stat-lbl">Avg Confidence</div></div>
+    `;
+
+    // Table
+    const tbody = document.getElementById('batch-table-body');
+    tbody.innerHTML = results.map(r => {
+      const warnings = (r.notes_or_warnings || []).length;
+      const warnBadge = warnings ? `<span class="badge badge-gold">${warnings}</span>` : '<span style="color:var(--text-3)">—</span>';
+      return `
+        <tr>
+          <td class="mono dim">${r.id}</td>
+          <td class="mono">${escHtml(r.style_number || '—')}</td>
+          <td>${stoneChip(r.stone_type)}</td>
+          <td>${escHtml(r.category || '—')}</td>
+          <td class="mono">${escHtml(r.metal || '—')} <span class="dim" style="font-size:11px">${escHtml(r.metal_group || '')}</span></td>
+          <td class="mono">${escHtml(r.quality || '—')}</td>
+          <td style="color:var(--gold-lt);font-weight:600;">${escHtml(r.brand || '—')}</td>
+          <td class="mono">${r.carat_weight != null ? r.carat_weight + ' ct' : '<span class="dim">—</span>'}</td>
+          <td>${confPill(r.confidence_score)}</td>
+          <td>${warnBadge}</td>
+        </tr>`;
+    }).join('');
+
+    // Card view
+    document.getElementById('batch-card-container').innerHTML =
+      results.map((r, i) => renderResultCard(r, i)).join('');
+  }
+
+  /* ═══════════════════════════════════════════════════
+     ALERTS & UTILS
+  ═══════════════════════════════════════════════════ */
+  function showAlert(containerId, msg) {
+    document.getElementById(containerId).innerHTML =
+      `<div class="alert alert-error"><span class="alert-icon">❌</span><span>${escHtml(msg)}</span></div>`;
+  }
+
+  function clearAlert(containerId) {
+    document.getElementById(containerId).innerHTML = '';
+  }
+
+  function showTempToast(msg) {
+    const t = document.createElement('div');
+    t.style.cssText = `
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+      background:#22c55e;color:#fff;padding:10px 22px;
+      border-radius:99px;font-size:13px;font-weight:600;
+      z-index:9999;animation:fadeInUp 0.3s ease;
+    `;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2200);
+  }
+</script>
+</body>
+</html>
