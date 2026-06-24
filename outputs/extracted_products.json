@@ -1,0 +1,287 @@
+[
+  {
+    "id": 1,
+    "raw_product_text": "B401400-14WVS Natural Diamond Band, 1.20cttw, round diamonds, size 6.5",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYRpQR6h7N6p84KDte\"}"
+    ]
+  },
+  {
+    "id": 2,
+    "raw_product_text": "LB401400-14WVS Lab Grown Diamond Band 1.20 ctw white gold",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYVKVtrz7M7Q91y4Nv\"}"
+    ]
+  },
+  {
+    "id": 3,
+    "raw_product_text": "B501200-18YRA Ruby and Diamond Alternate Band, 0.75ct diamond, 1.10ct ruby",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYZxo72mcjHVCrKpBS\"}"
+    ]
+  },
+  {
+    "id": 4,
+    "raw_product_text": "B601800-14REM Half Emerald Half Diamond Ring 14k rose gold",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYdE14szVMbBrgqT4y\"}"
+    ]
+  },
+  {
+    "id": 5,
+    "raw_product_text": "LB701100-18WFG Lab diamond pendant, F-G quality, 0.95cttw",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYhj88ojehaBhcXCwY\"}"
+    ]
+  },
+  {
+    "id": 6,
+    "raw_product_text": "B801300-PTVS Diamond eternity band platinum VS 2.00ct",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYkw6yVizCiJKnnami\"}"
+    ]
+  },
+  {
+    "id": 7,
+    "raw_product_text": "B901500-14YS Sapphire colorstone band yellow gold",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYpZPLyp2vqx7Rh3Lw\"}"
+    ]
+  },
+  {
+    "id": 8,
+    "raw_product_text": "LB301900-14RVS1 Lab grown diamond ring rose gold VS1 1.50 ctw",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYtTHYXuyh2M9g1jRH\"}"
+    ]
+  },
+  {
+    "id": 9,
+    "raw_product_text": "B221100-18W Ruby half and diamond half band, 18 white",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYxxf56FHqAczgP3fd\"}"
+    ]
+  },
+  {
+    "id": 10,
+    "raw_product_text": "B332200-14Y SI Natural diamond necklace 0.60cttw 14 yellow",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZ3hQdmaNwwRhN7Ewi\"}"
+    ]
+  },
+  {
+    "id": 11,
+    "raw_product_text": "LB445500-PTVVS2 Lab diamond bracelet platinum VVS2 3.25cttw",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZ7d3sMCjkcZd7px8D\"}"
+    ]
+  },
+  {
+    "id": 12,
+    "raw_product_text": "B778800-18R Emerald alternate diamond ring 18k rose gold",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZBfPiyN58XucQP8gZ\"}"
+    ]
+  },
+  {
+    "id": 13,
+    "raw_product_text": "B112233-14WDEF Natural diamond stud earrings D-E-F quality 1.00cttw",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZFqup7iVd9fRehjEg\"}"
+    ]
+  },
+  {
+    "id": 14,
+    "raw_product_text": "LB223344-18YGH Lab grown diamond hoop earrings G-H 0.80cttw",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZLL31zmuBctgGng9v\"}"
+    ]
+  },
+  {
+    "id": 15,
+    "raw_product_text": "B998877-14RS Ruby color stone only band 14 rose",
+    "style_number": null,
+    "parent": null,
+    "design_id": null,
+    "metal": null,
+    "metal_group": null,
+    "quality": null,
+    "stone_type": "Natural Diamond",
+    "category": null,
+    "is_lab_grown": false,
+    "brand": "AMIPI",
+    "carat_weight": null,
+    "confidence_score": 0.4,
+    "notes_or_warnings": [
+      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZQjwasPV6Vbuex9aL\"}"
+    ]
+  }
+]
