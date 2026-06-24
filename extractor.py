@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
+import time
 
 """
 AMIPI Product Data Extractor
@@ -206,21 +207,27 @@ def ai_extract(raw_text: str, api_key: str) -> dict:
         method="POST",
     )
 
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read())
-            text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-            text = re.sub(r"^```json\s*|```$", "", text, flags=re.MULTILINE).strip()
-            return json.loads(text)
-    except urllib.error.HTTPError as e:
-        body = e.read().decode(errors="replace")
-        return {"notes_or_warnings": [f"HTTP {e.code}: {body[:200]}"]}
-    except json.JSONDecodeError as e:
-        return {"notes_or_warnings": [f"JSON parse error from AI: {e}"]}
-    except KeyError as e:
-        return {"notes_or_warnings": [f"Unexpected API response format: {e}"]}
-    except Exception as e:
-        return {"notes_or_warnings": [f"AI call failed: {e}"]}
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read())
+                text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                text = re.sub(r"^```json\s*|```$", "", text, flags=re.MULTILINE).strip()
+                return json.loads(text)
+        except urllib.error.HTTPError as e:
+            if e.code == 429 and attempt < max_retries - 1:
+                import time
+                time.sleep(15 * (attempt + 1))  # wait 15s, 30s before retrying
+                continue
+            body = e.read().decode(errors="replace")
+            return {"notes_or_warnings": [f"HTTP {e.code}: {body[:200]}"]}
+        except json.JSONDecodeError as e:
+            return {"notes_or_warnings": [f"JSON parse error from AI: {e}"]}
+        except KeyError as e:
+            return {"notes_or_warnings": [f"Unexpected API response format: {e}"]}
+        except Exception as e:
+            return {"notes_or_warnings": [f"AI call failed: {e}"]}
 
 
 # ─────────────────────────────────────────────────
@@ -312,6 +319,7 @@ def run(input_csv: str, output_json: str, output_csv: str, api_key: str):
         print(f"  [{row_id:>2}] {raw_text[:65]}...")
         result = process_row(int(row_id), raw_text, api_key)
         results.append(result)
+        time.sleep(5)  # Limit to ~15 Requests Per Minute (Gemini Free Tier)
         print(f"       → {result['style_number']} | {result['stone_type']} | {result['category']} | conf={result['confidence_score']}")
 
     # Write JSON
