@@ -7,7 +7,7 @@ AMIPI Product Data Extractor
 Extracts structured product data from messy jewelry/diamond descriptions.
 
 Architecture:
-  - AI (Claude claude-sonnet-4-6) handles flexible NL understanding:
+  - AI (Gemini gemini-2.5-flash) handles flexible NL understanding:
       style_number extraction, category, stone type, carat weight.
   - Deterministic validation rules handle:
       style number parsing, metal group mapping, lab-grown detection,
@@ -152,7 +152,7 @@ def compute_confidence(parsed: dict, ai_result: dict) -> float:
 
 
 # ─────────────────────────────────────────────────
-#  AI EXTRACTION  (Claude)
+#  AI EXTRACTION  (Gemini)
 # ─────────────────────────────────────────────────
 
 AI_SYSTEM_PROMPT = """You are a jewelry product data extraction assistant specializing in diamond and gemstone products.
@@ -179,25 +179,29 @@ Key hints:
 
 def ai_extract(raw_text: str, api_key: str) -> dict:
     """
-    AI component: use Claude for flexible natural-language understanding.
+    AI component: use Gemini for flexible natural-language understanding.
     Returns the parsed AI fields dict.
     """
     import urllib.request, urllib.error
 
     payload = json.dumps({
-        "model": "claude-sonnet-4-6",
-        "max_tokens": 600,
-        "system": AI_SYSTEM_PROMPT,
-        "messages": [{"role": "user", "content": raw_text}],
-    }).encode()
+        "systemInstruction": {
+            "parts": [{"text": AI_SYSTEM_PROMPT}]
+        },
+        "contents": [{
+            "parts": [{"text": raw_text}]
+        }],
+        "generationConfig": {
+            "temperature": 0.1,
+            "responseMimeType": "application/json"
+        }
+    }).encode("utf-8")
 
     req = urllib.request.Request(
-        "https://api.anthropic.com/v1/messages",
+        f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}",
         data=payload,
         headers={
             "Content-Type": "application/json",
-            "x-api-key": api_key,
-            "anthropic-version": "2023-06-01",
         },
         method="POST",
     )
@@ -205,7 +209,7 @@ def ai_extract(raw_text: str, api_key: str) -> dict:
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = json.loads(resp.read())
-            text = data["content"][0]["text"].strip()
+            text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
             text = re.sub(r"^```json\s*|```$", "", text, flags=re.MULTILINE).strip()
             return json.loads(text)
     except urllib.error.HTTPError as e:
@@ -213,6 +217,8 @@ def ai_extract(raw_text: str, api_key: str) -> dict:
         return {"notes_or_warnings": [f"HTTP {e.code}: {body[:200]}"]}
     except json.JSONDecodeError as e:
         return {"notes_or_warnings": [f"JSON parse error from AI: {e}"]}
+    except KeyError as e:
+        return {"notes_or_warnings": [f"Unexpected API response format: {e}"]}
     except Exception as e:
         return {"notes_or_warnings": [f"AI call failed: {e}"]}
 
@@ -345,9 +351,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
+    # api_key = os.environ.get("ANTHROPIC_API_KEY")
+    api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        print("ERROR: Set the ANTHROPIC_API_KEY environment variable first.", file=sys.stderr)
+        print("ERROR: Set the GEMINI_API_KEY environment variable first.", file=sys.stderr)
         sys.exit(1)
 
     if args.single:

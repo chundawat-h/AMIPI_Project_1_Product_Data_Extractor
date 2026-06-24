@@ -2,59 +2,53 @@
   {
     "id": 1,
     "raw_product_text": "B401400-14WVS Natural Diamond Band, 1.20cttw, round diamonds, size 6.5",
-    "style_number": null,
-    "parent": null,
-    "design_id": null,
-    "metal": null,
-    "metal_group": null,
-    "quality": null,
+    "style_number": "B401400-14WVS",
+    "parent": "B401400",
+    "design_id": "B401",
+    "metal": "14W",
+    "metal_group": "14K",
+    "quality": "VS",
     "stone_type": "Natural Diamond",
-    "category": null,
+    "category": "Band",
     "is_lab_grown": false,
     "brand": "AMIPI",
-    "carat_weight": null,
-    "confidence_score": 0.4,
-    "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYRpQR6h7N6p84KDte\"}"
-    ]
+    "carat_weight": 1.2,
+    "confidence_score": 1.0,
+    "notes_or_warnings": []
   },
   {
     "id": 2,
     "raw_product_text": "LB401400-14WVS Lab Grown Diamond Band 1.20 ctw white gold",
-    "style_number": null,
-    "parent": null,
-    "design_id": null,
-    "metal": null,
-    "metal_group": null,
-    "quality": null,
-    "stone_type": "Natural Diamond",
-    "category": null,
-    "is_lab_grown": false,
-    "brand": "AMIPI",
-    "carat_weight": null,
-    "confidence_score": 0.4,
-    "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYVKVtrz7M7Q91y4Nv\"}"
-    ]
+    "style_number": "LB401400-14WVS",
+    "parent": "LB401400",
+    "design_id": "B401",
+    "metal": "14W",
+    "metal_group": "14K",
+    "quality": "VS",
+    "stone_type": "Lab-Grown Diamond",
+    "category": "Band",
+    "is_lab_grown": true,
+    "brand": "ALAB",
+    "carat_weight": 1.2,
+    "confidence_score": 1.0,
+    "notes_or_warnings": []
   },
   {
     "id": 3,
     "raw_product_text": "B501200-18YRA Ruby and Diamond Alternate Band, 0.75ct diamond, 1.10ct ruby",
-    "style_number": null,
-    "parent": null,
-    "design_id": null,
-    "metal": null,
-    "metal_group": null,
-    "quality": null,
-    "stone_type": "Natural Diamond",
-    "category": null,
+    "style_number": "B501200-18YRA",
+    "parent": "B501200",
+    "design_id": "B501",
+    "metal": "18Y",
+    "metal_group": "18K",
+    "quality": "RA",
+    "stone_type": "Diamond + Ruby",
+    "category": "Band",
     "is_lab_grown": false,
     "brand": "AMIPI",
-    "carat_weight": null,
-    "confidence_score": 0.4,
-    "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYZxo72mcjHVCrKpBS\"}"
-    ]
+    "carat_weight": 1.85,
+    "confidence_score": 1.0,
+    "notes_or_warnings": []
   },
   {
     "id": 4,
@@ -72,46 +66,42 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYdE14szVMbBrgqT4y\"}"
+      "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
     ]
   },
   {
     "id": 5,
     "raw_product_text": "LB701100-18WFG Lab diamond pendant, F-G quality, 0.95cttw",
-    "style_number": null,
-    "parent": null,
-    "design_id": null,
-    "metal": null,
-    "metal_group": null,
-    "quality": null,
-    "stone_type": "Natural Diamond",
-    "category": null,
-    "is_lab_grown": false,
-    "brand": "AMIPI",
-    "carat_weight": null,
-    "confidence_score": 0.4,
-    "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYhj88ojehaBhcXCwY\"}"
-    ]
+    "style_number": "LB701100-18WFG",
+    "parent": "LB701100",
+    "design_id": "B701",
+    "metal": "18W",
+    "metal_group": "18K",
+    "quality": "FG",
+    "stone_type": "Lab-Grown Diamond",
+    "category": "Pendant",
+    "is_lab_grown": true,
+    "brand": "ALAB",
+    "carat_weight": 0.95,
+    "confidence_score": 1.0,
+    "notes_or_warnings": []
   },
   {
     "id": 6,
     "raw_product_text": "B801300-PTVS Diamond eternity band platinum VS 2.00ct",
-    "style_number": null,
-    "parent": null,
-    "design_id": null,
-    "metal": null,
-    "metal_group": null,
-    "quality": null,
+    "style_number": "B801300-PTVS",
+    "parent": "B801300",
+    "design_id": "B801",
+    "metal": "PT",
+    "metal_group": "PT",
+    "quality": "VS",
     "stone_type": "Natural Diamond",
-    "category": null,
+    "category": "Band",
     "is_lab_grown": false,
     "brand": "AMIPI",
-    "carat_weight": null,
-    "confidence_score": 0.4,
-    "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYkw6yVizCiJKnnami\"}"
-    ]
+    "carat_weight": 2.0,
+    "confidence_score": 1.0,
+    "notes_or_warnings": []
   },
   {
     "id": 7,
@@ -129,7 +119,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYpZPLyp2vqx7Rh3Lw\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   },
   {
@@ -148,7 +138,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYtTHYXuyh2M9g1jRH\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   },
   {
@@ -167,7 +157,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVYxxf56FHqAczgP3fd\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   },
   {
@@ -186,7 +176,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZ3hQdmaNwwRhN7Ewi\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   },
   {
@@ -205,7 +195,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZ7d3sMCjkcZd7px8D\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   },
   {
@@ -224,7 +214,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZBfPiyN58XucQP8gZ\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   },
   {
@@ -243,7 +233,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZFqup7iVd9fRehjEg\"}"
+      "HTTP 503: {\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n"
     ]
   },
   {
@@ -262,7 +252,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZLL31zmuBctgGng9v\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   },
   {
@@ -281,7 +271,7 @@
     "carat_weight": null,
     "confidence_score": 0.4,
     "notes_or_warnings": [
-      "HTTP 401: {\"type\":\"error\",\"error\":{\"type\":\"authentication_error\",\"message\":\"invalid x-api-key\"},\"request_id\":\"req_011CcMVZQjwasPV6Vbuex9aL\"}"
+      "HTTP 429: {\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-a"
     ]
   }
 ]
