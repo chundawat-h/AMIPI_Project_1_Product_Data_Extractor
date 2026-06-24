@@ -1,0 +1,9 @@
+# AMIPI Product Data Extractor — Python dependencies
+# Python 3.10+ required (uses tuple[...] type hints)
+
+# Anthropic Python SDK (optional — extractor.py uses urllib directly)
+# anthropic>=0.25.0
+
+# No third-party packages are required to run extractor.py.
+# It uses only Python standard library: csv, json, re, argparse, urllib.
+# The Anthropic API is called via urllib.request with your ANTHROPIC_API_KEY.
