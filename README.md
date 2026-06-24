@@ -1,4 +1,4 @@
-# AMIPI_Project_1_Product_Data_Extractor# AMIPI Product Data Extractor
+# AMIPI Product Data Extractor
 
 **Project 1 — AI Intern Assignment**  
 Converts messy jewelry / diamond product descriptions into clean, structured JSON + CSV.
@@ -24,7 +24,7 @@ Jewelry product descriptions are inconsistent, abbreviated, and written in varyi
 - A [Gemini API key](https://aistudio.google.com/)
 - Uses minimal dependencies (`python-dotenv` for loading the `.env` file)
 
-### 2. clone repo
+### 2. Clone repo
 run this on your terminal:
 ```bash
 git clone https://github.com/chundawat-h/AMIPI_Project_1_Product_Data_Extractor.git
