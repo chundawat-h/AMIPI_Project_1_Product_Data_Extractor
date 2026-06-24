@@ -217,7 +217,6 @@ def ai_extract(raw_text: str, api_key: str) -> dict:
                 return json.loads(text)
         except urllib.error.HTTPError as e:
             if e.code == 429 and attempt < max_retries - 1:
-                import time
                 time.sleep(15 * (attempt + 1))  # wait 15s, 30s before retrying
                 continue
             body = e.read().decode(errors="replace")
