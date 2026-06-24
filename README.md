@@ -24,7 +24,14 @@ Jewelry product descriptions are inconsistent, abbreviated, and written in varyi
 - A [Gemini API key](https://aistudio.google.com/)
 - Uses minimal dependencies (`python-dotenv` for loading the `.env` file)
 
-### 2. Set your API key
+### 2. clone repo
+run this on your terminal:
+```bash
+git clone https://github.com/chundawat-h/AMIPI_Project_1_Product_Data_Extractor.git
+cd AMIPI_Project_1_Product_Data_Extractor
+```
+
+### 3. Set your API key
 
 Create a `.env` file in the root directory and add your key:
 
