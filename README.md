@@ -316,3 +316,23 @@ Deterministic rules guarantee correctness on structured fields — a pure AI pro
 - Inline hints ("Key hints:" section in the system prompt) reduce hallucination on jewelry-specific terminology.
 - The AI is **not trusted** for style number parsing, metal groups, lab-grown status, or brand — those are validated deterministically after the AI call.
 - If the AI returns malformed JSON, the row is still processed with deterministic fields populated from the raw text where possible.
+
+## Demo Screenshots
+- output.csv
+  
+  <img width="1452" height="420" alt="image" src="https://github.com/user-attachments/assets/06129931-0658-47b6-aa4d-53177c812522" />
+  
+- output.json
+  
+  <img width="1506" height="848" alt="image" src="https://github.com/user-attachments/assets/5afadebb-50d2-4da8-b957-8a7b41a4d6a6" />
+  
+- running code in terminal
+  
+  <img width="1528" height="977" alt="image" src="https://github.com/user-attachments/assets/0989579b-e3aa-4323-9262-a86f1f6cd85e" />
+  
+- single command run in terminal output
+  
+  <img width="1252" height="523" alt="image" src="https://github.com/user-attachments/assets/0df247bd-71fd-4429-9a96-7ede5ae4dbca" />
+
+
+ 
